@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ad Swipe Studio</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">Ad Swipe Studio <span>Meta Ad Library → winning copy → your ads</span></div>
+  <button id="btnSettings" class="ghost">⚙ Settings</button>
+</header>
+
+<section id="settings" class="card hidden">
+  <h2>Settings</h2>
+  <label>Claude API key <small>(kept only in this browser)</small>
+    <input id="apiKey" type="password" placeholder="sk-ant-...">
+  </label>
+  <label>Model
+    <select id="model">
+      <option value="claude-opus-5-5">Claude Opus 5.5 (best)</option>
+      <option value="claude-sonnet-5-5">Claude Sonnet 5.5 (cheaper)</option>
+    </select>
+  </label>
+  <div class="row">
+    <button id="btnSaveSettings">Save</button>
+    <button id="btnExport" class="ghost">Backup all data (.json)</button>
+    <label class="ghost filebtn">Restore backup<input id="restoreFile" type="file" accept=".json" hidden></label>
+  </div>
+</section>
+
+<nav class="steps">
+  <button data-step="1" class="active">1 · Country &amp; winner search</button>
+  <button data-step="2">2 · Winners sheet</button>
+  <button data-step="3">3 · Product → 2 ads</button>
+</nav>
+
+<!-- STEP 1 -->
+<section id="step1" class="card step">
+  <h2>1 · Pick the country and collect ads</h2>
+  <div class="grid2">
+    <label>Country
+      <select id="country"></select>
+    </label>
+    <label>Ad language
+      <select id="language">
+        <option value="French">French</option>
+        <option value="English">English</option>
+        <option value="Arabic">Arabic</option>
+        <option value="Portuguese">Portuguese</option>
+        <option value="Spanish">Spanish</option>
+      </select>
+    </label>
+  </div>
+
+  <details class="howto" open>
+    <summary>How it works (one time setup)</summary>
+    <ol>
+      <li>Drag this button to your bookmarks bar: <a id="bookmarklet" class="bm" href="#">⚡ Swipe Collector</a>
+        <small>(show the bar with Ctrl/Cmd+Shift+B)</small></li>
+      <li>Set Facebook's language to <b>English</b> (the collector reads the English labels).</li>
+      <li>Click a keyword below. It opens the Ad Library search for that country.</li>
+      <li>On that page click <b>⚡ Swipe Collector</b>, wait ~10 s, then press <b>Send to platform</b>. The ads land here and get scored.</li>
+    </ol>
+  </details>
+
+  <label>Keywords <small>(one per line, mix niches: winners can come from any health/beauty/gadget niche)</small>
+    <textarea id="keywords" rows="5"></textarea>
+  </label>
+  <div id="kwLinks" class="chips"></div>
+
+  <details>
+    <summary>Paste data manually (if "Send to platform" is blocked)</summary>
+    <textarea id="pasteBox" rows="3" placeholder="Paste what the collector copied"></textarea>
+    <button id="btnPaste">Import pasted data</button>
+  </details>
+
+  <div id="runLog" class="log"></div>
+  <div class="row">
+    <button id="btnToSheet">See winners sheet →</button>
+    <button id="btnClearCountry" class="danger ghost">Clear this country's data</button>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section id="step2" class="card step hidden">
+  <h2>2 · Winners sheet <span id="sheetCountry" class="pill"></span></h2>
+  <p class="muted">Score = days running + 10 × duplicates (same copy under several IDs, or "N ads use this creative"). Long-running ads are a strong hint, not proof of sales. Untick ads that aren't direct-response selling.</p>
+  <div class="row">
+    <label class="inline"><input type="checkbox" id="onlyStrong" checked> Only 25+ days or 3+ duplicates</label>
+    <label class="inline">Show top <input id="topN" type="number" value="12" min="3" max="50" style="width:64px"></label>
+    <button id="btnAnalyze">✨ Analyze style with Claude</button>
+    <button id="btnCopyTsv" class="ghost">Copy for Google Sheets</button>
+    <button id="btnCsv" class="ghost">Download CSV</button>
+  </div>
+  <div id="sheetStats" class="muted"></div>
+  <div class="tablewrap"><table id="winnersTable"></table></div>
+  <h3>Swipe patterns</h3>
+  <div id="patterns" class="muted">Run "Analyze style with Claude" to name the patterns that repeat across winners.</div>
+</section>
+
+<!-- STEP 3 -->
+<section id="step3" class="card step hidden">
+  <h2>3 · Your product → 2 ad copies + 2 headlines <span id="genCountry" class="pill"></span></h2>
+  <div class="grid2">
+    <label>Product name <input id="pName" placeholder="Jaysuing – Crème varices jambes"></label>
+    <label>Landing page link <input id="pLanding" placeholder="https://yourstore.com/product/..."></label>
+    <label>Alibaba link <input id="pAlibaba" placeholder="https://www.alibaba.com/product-detail/..."></label>
+    <label>Extra notes <small>(optional: price, offer, delivery, how people order)</small>
+      <input id="pNotes" placeholder="15 900 FCFA, 3 for 31 800, free delivery, pay on delivery">
+    </label>
+  </div>
+  <div class="row">
+    <button id="btnGenerate" class="primary">✨ Generate 2 ads</button>
+    <span id="genStatus" class="muted"></span>
+  </div>
+  <div id="facts"></div>
+  <div id="ads" class="ads"></div>
+  <h3>History</h3>
+  <div id="history" class="muted"></div>
+</section>
+
+<footer class="muted">Data stays in your browser (localStorage). Claude is called directly from this page with your key. Back up from Settings.</footer>
+
+<script src="collector.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
